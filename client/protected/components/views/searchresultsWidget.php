@@ -1,9 +1,7 @@
 <div class="scroll" id="searchresults"></div>
 <div class="bar">
 	<ul>
-		<li><a class="find_similar" title="Find similar tracks" href="#">
-			<img src="<?php echo Yii::app()->request->baseUrl ?>/images/similar_tracks.png" alt="last.fm" /></a>
-		</li>
+		<li><a class="find_similar" href="#">Find similar tracks</a></li>
 		<li class="right">
 			<form onsubmit="return false;" action="">
 				<fieldset>
