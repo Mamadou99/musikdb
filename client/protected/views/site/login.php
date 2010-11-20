@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 ?>
 
 <div id="login" class="centerscreen">
-	<h1>Login</h1>
+	<h1>Welcome</h1>
 
 <div class="form">
 	<?php $form=$this->beginWidget('CActiveForm', array(

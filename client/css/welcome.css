@@ -71,3 +71,41 @@ div.centerscreen a.button:hover {
 	margin-left:2px;
 	color:#CCC;
 }
+
+#login .form {
+	width:300px;
+	text-align:left;
+	margin:auto;
+	background-color:#EEE;
+	padding:20px;
+	border:1px inset #CCC;
+}
+
+#login .form label {
+	width:75px;
+	padding-right:5px;
+	display:block;
+	float:left;
+	text-align:right;
+}
+
+#login .form .row {
+	margin:3px 0;
+}
+
+#login .form .row input {
+	padding:2px;
+	border:1px inset #CCC;
+}
+
+#login .form .submit {
+	margin-top:20px;
+	height:10px;
+}
+
+#login .form .submit input {
+	background:#333;
+	color:#FFF;
+	float:right;
+	text-transform:uppercase;
+}
