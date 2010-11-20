@@ -1,0 +1,341 @@
+* {
+	margin:0;
+	padding:0;
+	border:0;
+}
+
+body
+{
+	margin: 0;
+	padding: 0;
+	color: #555;
+	font: normal 0.7em Tahoma,sans-serif;
+	background:#CCC;
+	overflow:hidden;
+}
+
+a {
+	color:#000;
+	text-decoration:none;
+}
+
+a:focus {
+	outline:none;
+}
+
+li {
+	list-style-type:none;
+}
+
+input {
+	padding:2px;
+	margin:0 2px;
+}
+
+input.button {
+	padding:0 16px;
+	background:#555;
+	color:#FFF;
+	border:1px solid #FFF;
+}
+
+input.button:hover {
+	background:#666;
+}
+
+#page {
+	width:100%;
+	min-width:790px;
+}
+
+#header
+{
+	margin: 0;
+	padding: 0;
+	background:#333;
+	color:#FFF;
+	font-size:1.2em;
+	font-family:'Georgia',serif;
+	height:108px;
+	border-bottom:10px solid #AAA;
+}
+
+#user {
+	margin:8px 8px 8px 24px;
+	color:#999;
+	font-size:0.8em;
+	font-family:Tahoma,sans-serif;
+	position:absolute;
+}
+
+#user a {
+	color:#999;
+	text-transform:uppercase;	
+}
+
+#logo
+{
+	padding:54px 24px 0 24px;
+	font-size:2em;
+	float:left;
+}
+
+#cover {
+	position:absolute;
+	right:0;
+	width:88px;
+	height:88px;
+	border:1px solid #AAA;
+	margin:8px;
+	background:#555;
+	z-index:999;
+}
+
+#cover:hover {
+	border-color:#FFF;
+}
+
+#cover.loading {
+	background:url('../images/ajax-loader_graybg.gif') center no-repeat #EEE;	
+}
+
+div.jp-single-player {	
+	float:right;
+}
+
+div.jp-interface {
+	width:366px;
+	height:108px;
+}
+
+#columns > div {
+	margin:0;
+	float:left;
+	border-left:1px solid #AAA;
+}
+
+div.loading {
+	background:url('../images/ajax-loader_graybg.gif') center 20% no-repeat #EEE;
+}
+
+div.scroll {
+	width:100%;
+	height:400px;
+	overflow:auto;
+}
+
+div.bar {
+	clear:left;
+	background:#333;
+	height:32px;
+	width:100%;
+	color:#FFF;
+}
+
+div.bar ul li {
+	float:left;
+	display:block;
+	padding:8px 8px 0 8px;
+}
+
+div.bar ul li.right {
+	float:right;
+}
+
+div.bar ul li a {
+	color:#FFF;
+}
+
+#tabs {
+	background:#FFF;
+}
+
+#tabs {
+	padding:0;
+	border:0;
+}
+
+#tabs .ui-widget-content {
+	padding:0;
+}
+
+#tabs .ui-tabs-nav  {
+	border-width:0 0 1px 0;
+}
+
+span.id {
+	display:none;
+}
+
+span.length {
+	float:right;
+}
+
+#filetree a {
+	text-decoration:none;
+	cursor:default;
+	padding:1px 1px 1px 22px;
+	color:#000;
+	display:block;
+}
+
+#filetree span.trackno:after {
+	content:'.';
+}
+
+#filetree .jqueryFileTree {
+	margin:2px;
+}
+
+#filetree li {
+	list-style-type:none;
+	background-repeat:no-repeat;
+}
+
+#filetree li ul {
+	padding-left:10px;
+}
+
+#filetree li.collapsed {
+	background-image:url('../images/icons/folder.png');
+}
+
+#filetree li.expanded {
+	background-image:url('../images/icons/folder_open.png');
+}
+
+#filetree li.media {
+	background-image:url('../images/icons/media.png');
+}
+
+#filetree li.download {
+	background-image:url('../images/icons/archive.png');
+}
+
+#searchresults ul.main {
+	padding:2px;
+}
+
+#searchresults li.item {
+	border-bottom:1px dotted #999;
+	padding:2px;
+	display:block;
+	white-space:nowrap;
+}
+
+#searchresults li.item:hover {
+	background:#EEE;
+}
+
+#searchresults li.item .info {
+	color:#999;
+}
+
+#playlistbrowser a {
+	text-decoration:none;
+	cursor:default;
+	padding:1px 1px 1px 22px;
+	color:#000;
+	display:block;
+}
+
+#playlistbrowser ul {
+	margin:2px 0;
+}
+
+#playlistbrowser li {
+	list-style-type:none;
+	background-repeat:no-repeat;
+	background-image:url('../images/icons/playlist.png');
+	background-position:2px 0;
+}
+
+#playlistbrowser li.selected {
+	background-color:#CCC;
+}
+
+#playlist {
+	width:366px;
+	background:#EEE;
+}
+
+#playlist ul {
+	height:100%;
+}
+
+#playlist li {
+	display:block;
+	padding:1px 2px 0 2px;
+	height:18px;
+	color:#000;
+	overflow:hidden;
+}
+
+#playlist a {
+	text-decoration:none;
+	color:inherit;
+	cursor:default;
+	white-space:nowrap;
+}
+
+#playlist li.selected,
+#playlist li.beingDragged {
+	background:#999;
+	color:#FFF;
+}
+
+#playlist span.trackno {
+	display:none;
+}
+
+#playlist span.queue {
+	display:block;
+	float:right;
+	background:#333;
+	color:#FFF;
+	margin:1px -3px 0 3px;
+	font-weight:bold;
+	padding:0 2px;
+	width:2em;
+	text-align:center;
+	-moz-border-radius:3px 0 0 3px;
+	border-radius:3px 0 0 3px;
+}
+
+#playlist li#currentSong {
+	font-weight:bold;
+	background:#666;
+	color:#FFF;
+}
+
+#settings div.form {
+	padding:20px;
+}
+
+#settings div.form div.row {
+	margin:10px 0;
+} 
+
+#settings div.form input,
+#settings div.form select {
+	border:1px inset #333;
+	padding:2px;
+}
+
+#settings div.form fieldset {
+	border:1px solid #CCC;
+	padding:10px;
+	margin:0 0 20px 0;
+}
+
+#settings div.form legend {
+	padding:2px;
+}
+
+#settings div.form label {
+	display:block;
+	float:left;
+	width:190px;
+	text-align:right;
+	padding-right:10px;
+}
