@@ -67,7 +67,6 @@ class StreamController extends Controller
 		// Check accesstoken
 		$checkUrl = Helpers::addUrlParams(
 			Yii::app()->params['accessUrl'], array('accesstoken'=>$accesstokenValue));
-		error_log($checkUrl);
 		$output = trim(file_get_contents($checkUrl));
 		if($output != '0') return;
 
