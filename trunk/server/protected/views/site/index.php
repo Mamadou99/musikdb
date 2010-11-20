@@ -8,5 +8,5 @@ Yii::app()->clientScript->registerCssFile(Yii::app()->request->baseUrl."/css/wel
 	<div id="menu">
 		<p><a class="button" href="<?php echo Yii::app()->request->baseUrl.'/backend.php' ?>">Administration</a></p>
 	</div>
-	<p><a href="<?php echo Yii::app()->createUrl('/site/logout'); ?>">Logout</a></p>
+	<p class="secondary_menu"><a href="<?php echo Yii::app()->createUrl('/site/logout'); ?>">Logout</a></p>
 </div>

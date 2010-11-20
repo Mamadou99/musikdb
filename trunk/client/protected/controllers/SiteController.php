@@ -70,6 +70,7 @@ class SiteController extends Controller
 			'baseUrl' => Yii::app()->request->baseUrl,
 			'serverBaseUrl' => Server::model()->find()->baseUrl,
 			'streamUrl' => '/index.php/stream/data',
+			'directoryUrl' => '/index.php/directory/listing',
 			'coverUrl' => Yii::app()->createUrl('track/cover'),
 			'accesstokenValidUrl' => Yii::app()->createUrl('accesstoken/valid'),
 			'accesstokenGenerateUrl' => Yii::app()->createUrl('accesstoken/generate'),

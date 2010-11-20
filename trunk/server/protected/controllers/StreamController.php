@@ -65,10 +65,7 @@ class StreamController extends Controller
 		$ext = $params[3];
 
 		// Check accesstoken
-		$checkUrl = Helpers::addUrlParams(
-			Yii::app()->params['accessUrl'], array('accesstoken'=>$accesstokenValue));
-		$output = trim(file_get_contents($checkUrl));
-		if($output != '0') return;
+		if(!Helpers::checkAccesstoken($accesstokenValue)) return;
 
 		// Create audio stream
 		if($ext == 'mp3') {

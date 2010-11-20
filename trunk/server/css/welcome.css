@@ -61,6 +61,14 @@ div.centerscreen a.button:hover {
 	background-color:#666;
 }
 
+div.centerscreen .secondary_menu a {
+	text-decoration:none;
+}
+
+div.centerscreen .secondary_menu a:hover {
+	color:#333;
+}
+
 #menu {
 	padding:20px;
 	background:#333;
