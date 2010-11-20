@@ -19,9 +19,6 @@
 
 <ul id="menu">
 	<li><?php echo CHtml::link('Users',array('user/admin')); ?></li>
-	<li><?php echo CHtml::link('User Profiles',array('userprofile/admin')); ?></li>
-	<li><?php echo CHtml::link('Streaming Servers',array('server/admin')); ?></li>
-	<li><?php echo CHtml::link('Release Log',array('releaseLogEntry/admin')); ?></li>
 </ul>
 
 <?php echo $content; ?>
