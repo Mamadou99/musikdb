@@ -39,7 +39,9 @@ Yii::app()->clientScript->registerScript('vars', $varsJS.'
 
 <div id="header">
 	<div id="user">Hello <strong><?php echo CHtml::encode(Yii::app()->user->name); ?></strong>! |
-	<a href="<?php echo Yii::app()->request->baseUrl.'/backend.php' ?>">Administration</a> |
+	<?php if(Yii::app()->user->isAdmin()): ?>
+		<a href="<?php echo Yii::app()->request->baseUrl.'/backend.php' ?>">Administration</a> |
+	<?php endif; ?>
 	<a href="<?php echo Yii::app()->createUrl('/site/logout'); ?>">Logout</a>
 	</div>
 
@@ -101,9 +103,11 @@ Yii::app()->clientScript->registerScript('vars', $varsJS.'
 </div>
 
 <?php
+
 $this->widget('application.extensions.filetree.SFileTree',
 	array(
-		"script"=>Yii::app()->createUrl('directory'),
+		"script"=>Helpers::addUrlParams($vars['serverBaseUrl'].$vars['directoryUrl'],
+				array('accesstoken'=>$vars['accesstoken'])),
 		"div"=>"filetree",
 		"multiFolder"=>"true",
 		"callback"=>"refreshDraggables",

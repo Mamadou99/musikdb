@@ -34,7 +34,7 @@ class DirectoryController extends Controller
 		return array(
 			array('allow',
 				'actions'=>array('listing'),
-				'users'=>array('@'),
+				'users'=>array('*'),
 			),
 			array('deny',
 				'users'=>array('*'),
@@ -47,13 +47,14 @@ class DirectoryController extends Controller
 	 */
 	public function actionListing()
 	{
+		if(!Helpers::checkAccesstoken($_GET['accesstoken']))
+			die('Accesstoken not valid');
 
 		$model=new Directory();
 		$model->baseDir = Yii::app()->params['mediaPath'];
 
 		if(!is_readable($model->baseDir)) {
-			echo "Directory not available";
-			return;
+			die('Directory not available');
 		}
 
 		if(isset($_REQUEST['dir']))

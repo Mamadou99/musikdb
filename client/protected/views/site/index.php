@@ -30,6 +30,7 @@ Yii::app()->clientScript->registerScript('popup', $script);
 			<label for="popup_check">Launch in popup</label>
 		</div>
 	</div>
-	<p><a href="<?php echo Yii::app()->request->baseUrl.'/backend.php' ?>">Administration</a> |
+	<p class="secondary_menu"><?php if(Yii::app()->user->isAdmin()): ?>
+		<a href="<?php echo Yii::app()->request->baseUrl.'/backend.php' ?>">Administration</a> |<?php endif; ?>
 	<a href="<?php echo Yii::app()->createUrl('/site/logout'); ?>">Logout</a></p>
 </div>
