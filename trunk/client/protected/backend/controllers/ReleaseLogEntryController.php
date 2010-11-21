@@ -120,6 +120,7 @@ class ReleaseLogEntryController extends BackendController
 		$model=new Csv();
 		$releases=array();
 		$step = 1;
+		$delete_cmds = array();
 
 		// step 2 - validate
 		if(isset($_POST['Csv']))
@@ -144,8 +145,10 @@ class ReleaseLogEntryController extends BackendController
 							"{$release->artist} &ndash; {$release->title}</em>\n";
 
 					// validate model
-					if(!$release->validate())
+					if(!$release->validate()) {
 						$errorMsg.= CHtml::errorSummary($release);
+						if($release->_delete_cmd) $delete_cmds[]=$release->_delete_cmd;
+					}
 
 					if($errorMsg) $errors.= "Error in line $lineno: $errorMsg<br />";
 					$tempStore[] = $release->artist.$release->title;
@@ -182,6 +185,7 @@ class ReleaseLogEntryController extends BackendController
 			'step'=>$step,
 			'model'=>$model,
 			'releases'=>$releases,
+			'delete_cmds'=>$delete_cmds,
 		));
 	}
 

@@ -17,6 +17,8 @@
  */
 class ReleaseLogEntry extends CActiveRecord
 {
+	public $_delete_cmd;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @return ReleaseLogEntry the static model class
@@ -53,20 +55,24 @@ class ReleaseLogEntry extends CActiveRecord
 			array('id, type, title, artist, user_id, date, avg_bitrate, musicbrainz_albumid', 'safe', 'on'=>'search'),
 		);
 	}
-	
+
 	public function releaseLogEntryUnique($attribute, $params)
 	{
 		if($this->artist===null) {
 			$model=ReleaseLogEntry::model()->find('title=:title',
-				array(':title'=>$this->title));			
+				array(':title'=>$this->title));
 		}
 		else {
 			$model=ReleaseLogEntry::model()->find('title=:title AND artist=:artist',
 				array(':title'=>$this->title, ':artist'=>$this->artist));
 		}
-		
-		if($model) $this->addError('title','This release is already in the database: <em>'.
-			"{$model->artist} &ndash; {$model->title} (ID: {$model->id})</em>");
+
+		if($model) {
+			$this->addError('title','This release is already in the database: <em>'.
+				"{$model->artist} &ndash; {$model->title} (ID: {$model->id})</em>");
+			$this->_delete_cmd='rm -r "./'.strtoupper(substr($model->artist,0,1)).
+				'/'.$model->artist.'/'.$model->title.'"';
+		}
 	}
 
 	/**
@@ -94,7 +100,7 @@ class ReleaseLogEntry extends CActiveRecord
 			'date' => 'Date',
 			'avg_bitrate' => 'Avg Bitrate',
 			'musicbrainz_albumid' => 'Musicbrainz Albumid',
-			
+
 			'csvdata' => 'CSV Data',
 		);
 	}

@@ -34,6 +34,15 @@ $this->menu=array(
 		</ul>
 
 		<?php echo $form->errorSummary($model); ?>
+		<?php if(count($delete_cmds)): ?>
+		<h2>Delete Script</h2>
+		<div class="code">
+			#!/bin/sh<br /><br />
+			<?php foreach($delete_cmds as $delete_cmd): ?>
+			<?php echo $delete_cmd ?><br />
+			<?php endforeach; ?>
+		</div>
+		<?php endif; ?>
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'input'); ?>
