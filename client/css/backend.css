@@ -1,1 +1,6 @@
-@CHARSET "UTF-8";
+div.code {
+	font-family:'Courier New',monospace;
+	border:1px inset #CCC;
+	padding:2px;
+	margin:20px 0;
+}
