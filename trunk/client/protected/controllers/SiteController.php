@@ -58,64 +58,14 @@ class SiteController extends Controller
 		$this->render('index');
 	}
 
-	public function actionApp() {
-
-		// get accesstoken
+	public function actionApp()
+	{
+		// create accesstoken
 		Yii::import('application.controllers.AccesstokenController');
-		$accesstoken = AccesstokenController::generate(Yii::app()->user);
+		$accesstokenValue=AccesstokenController::generate(Yii::app()->user)->value;
 
-		// variables needed by frontend
-		$vars = array(
-
-			'baseUrl' => Yii::app()->request->baseUrl,
-			'serverBaseUrl' => Server::model()->find()->baseUrl,
-			'streamUrl' => '/index.php/stream/data',
-			'directoryUrl' => '/index.php/directory/listing',
-			'coverUrl' => Yii::app()->createUrl('track/cover'),
-			'accesstokenValidUrl' => Yii::app()->createUrl('accesstoken/valid'),
-			'accesstokenGenerateUrl' => Yii::app()->createUrl('accesstoken/generate'),
-			'accesstokenRefreshPeriod' => Yii::app()->params['accesstokenRefreshPeriod'],
-			'accesstoken' => $accesstoken->value,
-			'savePlaylistUrl' => Yii::app()->createUrl('playlist/save'),
-			'loadPlaylistUrl' => Yii::app()->createUrl('playlist/load'),
-			'loadPlaylistbrowserUrl' => Yii::app()->createUrl('playlist/list'),
-			'createPlaylistUrl' => Yii::app()->createUrl('playlist/create'),
-			'savePlaylistUrl' => Yii::app()->createUrl('playlist/save'),
-			'renamePlaylistUrl' => Yii::app()->createUrl('playlist/rename'),
-			'deletePlaylistUrl' => Yii::app()->createUrl('playlist/delete'),
-			'similarTracksUrl' => Yii::app()->createUrl('track/similar'),
-			'metaDataUrl' => Yii::app()->createUrl('track/meta'),
-			'windowTitle' => Yii::app()->name.' '.Yii::app()->version,
-			'jPlayerSwfPath' => Yii::app()->request->baseUrl.'/js',
-
-			// settings which may be overriden by the userprofile
-			'crossfadeTime' => (int)Yii::app()->params['crossfadeTime'],
-			'transcodingBitrate' => 0,
-		);
-
-		// retrieve user settings
-		$userprofile = Userprofile::model()->findByAttributes(
-				array('user_id'=>Yii::app()->user->id));
-
-		if($userprofile!==null) {
-			// override system settings with corresponding usersettings
-			foreach($vars as $key=>$value) {
-				if(isset($userprofile->$key)) {
-					// why do we always get strings from the Userprofile object?
-					// let's force them back to INT...
-					if(is_int($vars[$key]))
-						$vars[$key] = (int)$userprofile->$key;
-					else
-						$vars[$key] = $userprofile->$key;
-				}
-			}
-			// override server
-			if($userprofile->server!==null) {
-				$vars['serverBaseUrl']=$userprofile->server->baseUrl;
-			}
-		}
-
-		$this->render('app', array('vars'=>$vars));
+		$this->render('app', array('vars'=>Yii::app()->params['vars'],
+				'accesstoken'=>$accesstokenValue));
 	}
 
 	/**

@@ -26,6 +26,8 @@ foreach($vars as $key=>$value) {
 
 Yii::app()->clientScript->registerScript('vars', $varsJS.'
 
+	accesstoken = "'.$accesstoken.'";
+
 	currentSong = "";
 	priPlayerID = "jquery_jplayer";
 	secPlayerID = "jquery_jplayer2";
@@ -106,8 +108,7 @@ Yii::app()->clientScript->registerScript('vars', $varsJS.'
 
 $this->widget('application.extensions.filetree.SFileTree',
 	array(
-		"script"=>Helpers::addUrlParams($vars['serverBaseUrl'].$vars['directoryUrl'],
-				array('accesstoken'=>$vars['accesstoken'])),
+		"script"=>Yii::app()->createUrl('directory/listing'),
 		"div"=>"filetree",
 		"multiFolder"=>"true",
 		"callback"=>"refreshDraggables",

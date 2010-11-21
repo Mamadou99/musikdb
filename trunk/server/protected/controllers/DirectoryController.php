@@ -47,7 +47,7 @@ class DirectoryController extends Controller
 	 */
 	public function actionListing()
 	{
-		if(!Helpers::checkAccesstoken($_GET['accesstoken']))
+		if(!isset($_GET['accesstoken']) || !Helpers::checkAccesstoken($_GET['accesstoken']))
 			die('Accesstoken not valid');
 
 		$model=new Directory();
@@ -57,6 +57,7 @@ class DirectoryController extends Controller
 			die('Directory not available');
 		}
 
+		$model->directory = '';
 		if(isset($_REQUEST['dir']))
 			$model->directory = Helpers::decodeUrl($_REQUEST['dir']);
 
@@ -64,7 +65,9 @@ class DirectoryController extends Controller
 		$model->contents = $this->readDirectory($model);
 		$model->upperDir = '';
 
-		$this->renderPartial('listing',array('model'=>$model));
+		echo json_encode(array(
+			'directory'=>$model->directory,
+			'contents'=>$model->contents));
 	}
 
 
