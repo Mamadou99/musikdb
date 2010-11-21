@@ -1,13 +1,13 @@
 <?php
 
-class DownloadController extends Controller
+class DirectoryController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to 'column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
 	public $layout='column2';
-	public $defaultAction='do';
+	public $defaultAction='listing';
 
 	/**
 	 * @var CActiveRecord the currently loaded data model instance.
@@ -33,7 +33,7 @@ class DownloadController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('do'),
+				'actions'=>array('listing'),
 				'users'=>array('*'),
 			),
 			array('deny',
@@ -45,24 +45,25 @@ class DownloadController extends Controller
 	/**
 	 * Displays a particular model.
 	 */
-	public function actionDo()
+	public function actionListing()
 	{
-		if(!isset($_GET['accesstoken']) || !Helpers::checkAccesstoken($_GET['accesstoken']))
-			die('Accesstoken not valid');
+		// get accesstoken
+		Yii::import('application.controllers.AccesstokenController');
+		$accesstoken=AccesstokenController::get(Yii::app()->user);
+		if($accesstoken) $accesstokenValue=$accesstoken->value;
 
-		// Stop on directory traversal attempts
-		if(strpos($_GET['dir'], '../') !== false) return;
+		$dir=$_REQUEST['dir'];
+		if($dir=='/') $dir='';
 
-		$path = Yii::app()->params['mediaPath'].'/'.Helpers::decodeUrl($_GET['dir']);
-		$dirname = basename($path);
+		$vars=Yii::app()->params['vars'];
+		$request=$vars['serverBaseUrl'].$vars['directoryUrl'].
+				'/dir/'.$dir.'/accesstoken/'.$accesstokenValue;
 
-		if(is_readable($path)) {
-			header('Content-Type: application/octet-stream');
-			header('Content-Disposition: attachment; filename="'.$dirname.'.zip"');
-			header('Content-Transfer-Encoding: binary');
+		$response=json_decode(file_get_contents($request));
 
-			passthru("cd \"$path/../\"; zip -8 -r -q - \"$dirname\" | cat");
-		}
+		$this->renderPartial('listing',array(
+			'model'=>$response,
+			'accesstoken'=>$accesstokenValue));
 	}
 
 }

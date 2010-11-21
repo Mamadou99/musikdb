@@ -75,7 +75,7 @@ class AccesstokenController extends Controller
 	}
 
 	/**
-	 * Create or lookup the accesstoken for the given WebUser
+	 * Create or renew the accesstoken for the given WebUser
 	 *
 	 * @param WebUser
 	 * @return Accesstoken
@@ -94,5 +94,15 @@ class AccesstokenController extends Controller
 			return $model;
 		}
 		else return null;
+	}
+
+	/**
+	 * Lookup the accesstoken for the given WebUser
+	 *
+	 */
+	public static function get($webuser) {
+
+		$user=User::model()->findByPk($webuser->id);
+		return Accesstoken::model()->findByAttributes(array('user_id'=>$webuser->id));
 	}
 }

@@ -50,8 +50,7 @@ class Helpers extends Controller {
 
 		if(!trim($accesstoken)) return false;
 
-		$checkUrl = self::addUrlParams(
-			Yii::app()->params['accessUrl'], array('accesstoken'=>$accesstoken));
+		$checkUrl = Yii::app()->params['accessUrl'].'/accesstoken/'.$accesstoken;
 		$output = trim(file_get_contents($checkUrl));
 
 		if($output != '0') return false;
