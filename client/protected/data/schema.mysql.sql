@@ -62,7 +62,7 @@ CREATE TABLE `tbl_releaselogentry` (
   `artist` varchar(255) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `date` date NOT NULL,
-  `avg_bitrate` smallint(6) DEFAULT NULL,
+  `avg_bitrate` mediumint(6) DEFAULT NULL,
   `musicbrainz_albumid` varchar(48) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
