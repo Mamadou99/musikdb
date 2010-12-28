@@ -221,6 +221,9 @@ class ReleaseLogEntryController extends BackendController
 			// date
 			if(isset($record[4])) $model->date = $record[4];
 
+			// avg bitrate
+			if(isset($record[5])) $model->avg_bitrate = $record[5];
+
 			$models[$lineno+1] = $model;
 		}
 
