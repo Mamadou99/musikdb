@@ -49,8 +49,8 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'artist',
 		'user_id',
 		'date',
-		/*
 		'avg_bitrate',
+		/*
 		'musicbrainz_albumid',
 		*/
 		array(
