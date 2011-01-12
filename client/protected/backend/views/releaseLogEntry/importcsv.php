@@ -33,20 +33,53 @@ $this->menu=array(
 			<li>MusicBrainz Album ID <em>(optional)</em></li>
 		</ul>
 
-		<?php echo $form->errorSummary($model); ?>
-		<?php if(count($delete_cmds)): ?>
-		<h2>Delete Script</h2>
+		<?php echo $form->errorSummary($model, '<p><strong>Please note the following errors or conflicts.</strong></p>'); ?>
+
+		<?php if(count($taggingDeleteScript)): ?>
+		<h2>Tagging Delete Script</h2>
 		<div class="code">
 			#!/bin/sh<br /><br />
-			<?php foreach($delete_cmds as $delete_cmd): ?>
+			<br />
+			# TAGGING DELETE SCRIPT<br />
+			# <?php echo date('Y-m-d H:i:s')  ?><br />
+			<br />
+			<?php foreach($taggingDeleteScript as $delete_cmd): ?>
 			<?php echo $delete_cmd ?><br />
 			<?php endforeach; ?>
 		</div>
+		<div class="row">
+			<?php echo $form->checkBox($model, 'execTagging'); ?>
+			<?php echo $form->labelEx($model,'execTagging'); ?>
+		</div>
 		<?php endif; ?>
 
+		<?php if(count($collectionDeleteScript)): ?>
+		<h2>Collection Delete Script</h2>
+		<div class="code">
+			#!/bin/sh<br /><br />
+			<br />
+			# COLLECTION DELETE SCRIPT<br />
+			# <?php echo date('Y-m-d H:i:s')  ?><br />
+			<br />
+			<?php foreach($collectionDeleteScript as $delete_cmd): ?>
+			<?php echo $delete_cmd ?><br />
+			<?php endforeach; ?>
+		</div>
+		<div class="row">
+			<?php echo $form->checkBox($model, 'execCollection'); ?>
+			<?php echo $form->labelEx($model,'execCollection'); ?>
+		</div>
+		<?php endif; ?>
+
+		<h2>Release List</h2>
 		<div class="row">
 			<?php echo $form->labelEx($model,'input'); ?>
-			<?php echo $form->textArea($model, 'input', array('rows' => 20, 'cols' => 80)); ?>
+			<?php if($disableInput): ?>
+				<?php echo $form->textArea($model, 'input', array('rows' => 20, 'cols' => 80,
+					'class' => 'readonly', 'readonly' => 'readonly')); ?>
+			<?php else:?>
+				<?php echo $form->textArea($model, 'input', array('rows' => 20, 'cols' => 80)); ?>
+			<?php endif;?>
 		</div>
 
 		<div class="row buttons">
@@ -81,6 +114,7 @@ $this->menu=array(
 		</table>
 
 		<?php echo $form->hiddenField($model, 'input'); ?>
+		<?php echo $form->hiddenField($model, 'execTagging'); ?>
 		<?php echo CHtml::hiddenField('sure',1); ?>
 		<?php echo CHtml::submitButton('Save'); ?>
 	<?php endif; ?>
