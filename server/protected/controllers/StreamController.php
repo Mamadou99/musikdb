@@ -101,6 +101,12 @@ class StreamController extends Controller
 
 		$path = $this->_model->baseDir.DIRECTORY_SEPARATOR.$this->_model->relpath;
 
+		if(!is_readable($path)) {
+			header("HTTP/1.0 404 Not Found");
+			return;
+		}
+
+		session_write_close();
 		header("Content-Type: audio/mpeg");
 
 		// direct stream
@@ -139,6 +145,7 @@ class StreamController extends Controller
 		if(!is_readable($path)) $path=dirname(Yii::app()->basePath).DIRECTORY_SEPARATOR.'images'.
 				DIRECTORY_SEPARATOR.'nocover.jpg';
 
+		session_write_close();
 		if($this->_model->size==0) {
 			echo file_get_contents($path);
 		}
