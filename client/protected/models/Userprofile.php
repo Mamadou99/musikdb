@@ -71,7 +71,7 @@ class Userprofile extends CActiveRecord
 			'id' => 'ID',
 			'user_id' => 'User',
 			'server_id' => 'Server',
-			'crossfadeTime' => 'Crossfade Time',
+			'crossfadeTime' => 'Crossfade Time (ms)',
 			'transcodingBitrate' => 'Transcoding Bitrate',
 			'openPopup' => 'Open Popup',
 		);
