@@ -17,7 +17,9 @@
  */
 class ReleaseLogEntry extends CActiveRecord
 {
-	public $_delete_cmd;
+	public $_deleteCmd;
+	public $_isBetterRelease;
+	public $_worseReleaseInDB;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -49,7 +51,7 @@ class ReleaseLogEntry extends CActiveRecord
 			array('type', 'length', 'max'=>5),
 			array('title, artist', 'length', 'max'=>255),
 			array('musicbrainz_albumid', 'length', 'max'=>48),
-			array('title','releaseLogEntryUnique'),
+			array('title','releaseLogEntryUnique','on'=>'insert'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, type, title, artist, user_id, date, avg_bitrate, musicbrainz_albumid', 'safe', 'on'=>'search'),
@@ -68,10 +70,29 @@ class ReleaseLogEntry extends CActiveRecord
 		}
 
 		if($model) {
-			$this->addError('title','This release is already in the database: <em>'.
-				"{$model->artist} &ndash; {$model->title} (ID: {$model->id})</em>");
-			$this->_delete_cmd='rm -r "./'.strtoupper(substr($model->artist,0,1)).
-				'/'.$model->artist.'/'.$model->title.'"';
+			// release is already in the database, decide which one is better
+			$betterRelease = Helpers::chooseBetterQuality($model, $this);
+
+			if($this===$betterRelease) {
+
+				$this->_isBetterRelease = true;
+				$this->_worseReleaseInDB = $model;
+
+				$this->addError('title','<strong>Already present.</strong> New one will be <strong>accepted</strong> though because the quality seems to be better:<br /><em>'.
+					"{$model->artist} &ndash; {$model->title} (ID: {$model->id})</em><br />".
+					"Release in DB: {$model->avg_bitrate} bps / new release: {$this->avg_bitrate} bps");
+
+				$this->_deleteCmd = Helpers::getDeleteCommand($model);
+			}
+			else {
+
+				$this->addError('title','<strong>Already present.</strong> New one will be <strong>denied</strong> because the quality does not seem to be better:<br /><em>'.
+					"{$model->artist} &ndash; {$model->title} (ID: {$model->id})</em><br />".
+					"Release in DB: {$model->avg_bitrate} bps / new release: {$this->avg_bitrate} bps");
+
+				$this->_deleteCmd = Helpers::getDeleteCommand($model);
+			}
+
 		}
 	}
 

@@ -120,7 +120,11 @@ class ReleaseLogEntryController extends BackendController
 		$model=new Csv();
 		$releases=array();
 		$step = 1;
-		$delete_cmds = array();
+		$taggingDeleteScript = array();
+		$collectionDeleteScript = array();
+
+		$disableInput = false;
+		if(count($_POST)) $formSubmitted = true;
 
 		// step 2 - validate
 		if(isset($_POST['Csv']))
@@ -138,19 +142,53 @@ class ReleaseLogEntryController extends BackendController
 				$tempStore = array();
 				foreach($releases as $lineno => $release) {
 					$errorMsg = '';
+					$errorClass = '';
 
-					// check if there's a duplicate in the user's input
+					// check if there's a duplicate line in the user's input
 					if(array_search($release->artist.$release->title, $tempStore) !== false)
 						$errorMsg.= 'This release appears more than once in your input: <em>'.
 							"{$release->artist} &ndash; {$release->title}</em>\n";
 
 					// validate model
+					$deleted = false;
 					if(!$release->validate()) {
-						$errorMsg.= CHtml::errorSummary($release);
-						if($release->_delete_cmd) $delete_cmds[]=$release->_delete_cmd;
+
+						if($release->_deleteCmd) {
+							$disableInput = true;
+							if($release->_isBetterRelease) {
+
+								// release in tagging folder is better
+								if($model->execCollection) {
+									// delete script has been executed
+									// remove release log entry from database
+									$deleted = $release->_worseReleaseInDB->delete();
+								}
+								else {
+									// delete script has not been displayed yet; do it now
+									$errorClass = 'accepted';
+									$collectionDeleteScript[] = $release->_deleteCmd;
+								}
+							}
+							elseif(!$release->_isBetterRelease) {
+
+								// release in collection is better
+								if($model->execTagging) {
+									// delete script has been executed
+									// remove release log entry from array
+									unset($releases[$lineno]);
+									$deleted = true;
+								}
+								else {
+									// delete script has not been displayed yet; do it now
+									$errorClass = 'denied';
+									$taggingDeleteScript[] = $release->_deleteCmd;
+								}
+							}
+						}
 					}
 
-					if($errorMsg) $errors.= "Error in line $lineno: $errorMsg<br />";
+					if(!$deleted) $errorMsg.= CHtml::errorSummary($release, '', '', array('class'=>"errorSummary $errorClass"));
+					if($errorMsg) $errors.= "Line $lineno: $errorMsg<br />";
 					$tempStore[] = $release->artist.$release->title;
 				}
 				unset($tempStore);
@@ -182,10 +220,12 @@ class ReleaseLogEntryController extends BackendController
 		}
 
 		$this->render('importcsv',array(
+			'disableInput'=>$disableInput,
 			'step'=>$step,
 			'model'=>$model,
 			'releases'=>$releases,
-			'delete_cmds'=>$delete_cmds,
+			'taggingDeleteScript'=>$taggingDeleteScript,
+			'collectionDeleteScript'=>$collectionDeleteScript
 		));
 	}
 

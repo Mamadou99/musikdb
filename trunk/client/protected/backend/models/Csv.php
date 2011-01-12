@@ -3,7 +3,8 @@
 class Csv extends CModel
 {
 	public $input;
-	public $data;
+	public $execTagging;
+	public $execCollection;
 
 	/**
 	 * Returns the static model of the specified AR class.
@@ -23,14 +24,17 @@ class Csv extends CModel
 		// will receive user inputs.
 		return array(
 			array('input', 'required'),
+			array('execTagging', 'boolean'),
+			array('execCollection', 'boolean'),
 		);
 	}
-	
+
 	public function attributeNames()
 	{
 		return array(
 			'input',
-			'data',
+			'execTagging',
+			'execCollection',
 		);
 	}
 
@@ -40,7 +44,9 @@ class Csv extends CModel
 	public function attributeLabels()
 	{
 		return array(
-			'input' => 'CSV'
+			'input' => 'CSV',
+			'execTagging' => 'I have executed the Tagging Delete Script',
+			'execCollection' => 'I have executed the Collection Delete Script',
 		);
 	}
 }

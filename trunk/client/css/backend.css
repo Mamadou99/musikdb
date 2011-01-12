@@ -1,6 +1,35 @@
+h2 {
+	margin:1.5em 0 1em 0;
+}
+
 div.code {
 	font-family:'Courier New',monospace;
 	border:1px inset #CCC;
 	padding:2px;
 	margin:20px 0;
+	font-size:.8em;
+}
+
+textarea.readonly {
+	background-color:#EEE !important;
+	border:1px solid #CCC !important;
+	color:#999 !important;
+}
+
+div.errorSummary {
+	margin:10px 0 0 0 !important;
+}
+
+div.errorSummary div.errorSummary {
+	font-size:.95em !important;
+}
+
+div.accepted {
+	background-color:#b4eeac !important;
+	border-color:#668761 !important;
+}
+
+div.denied {
+	background-color:#edc3c3 !important;
+	border-color:#996a6a !important;
 }
