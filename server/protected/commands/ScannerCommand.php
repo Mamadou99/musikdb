@@ -17,7 +17,7 @@ class ScannerCommand extends CConsoleCommand {
 
 	public function ScannerCommand() {
 
-		$this->viewPath = 'protected/views/commands/scanner/';
+		$this->viewPath = Yii::app()->basePath.'/views/commands/scanner/';
 
 		// check if exiftool is available
 		if(!is_executable(Yii::app()->params['exiftoolBin']))
