@@ -17,8 +17,7 @@ class ScannerCommand extends CConsoleCommand {
 
 	public function ScannerCommand() {
 
-		$this->viewPath = 'views'.DIRECTORY_SEPARATOR.'commands'.
-			DIRECTORY_SEPARATOR.'scanner'.DIRECTORY_SEPARATOR;
+		$this->viewPath = 'protected/views/commands/scanner/';
 
 		// check if exiftool is available
 		if(!is_executable(Yii::app()->params['exiftoolBin']))
