@@ -268,29 +268,44 @@ class ScannerCommand extends CConsoleCommand {
 		$options = '-j -'.implode($tags, ' -');
 		$command = Yii::app()->params['exiftoolBin']." $options ".' '.escapeshellarg($fullpath);
 		$data = reset(json_decode(shell_exec($command)));
+
 		$meta = array();
+		$meta['length'] = 0;
+		$meta['number'] = 0;
+		$meta['total'] = 0;
+		$meta['bitrate'] = 0;(int) $data->AudioBitrate;
+		$meta['samplerate'] = 0; (int) $data->SampleRate;
+		$meta['artist'] = '';
+		$meta['title'] = '';
+		$meta['album'] = '';
+		$meta['year'] = 0;
 
 		// Convert length from MM:SS format into pure seconds
-		$length_parts = explode(':',$data->Duration);
-		$minutes = (int) $length_parts[0];
-		$seconds = (int) $length_parts[1];
-		$meta['length'] = $minutes*60 + $seconds;
+		if(isset($data->Duration)) {
+			$length_parts = explode(':',$data->Duration);
+			$minutes = (int) $length_parts[0];
+			$seconds = (int) $length_parts[1];
+			$meta['length'] = $minutes*60 + $seconds;
+		}
 
 		// Decide wether it's CBR or VBR
-		if((int) $data->AudioBitrate % 32000 == 0)
-			$meta['mode'] = 'cbr';
-		else
-			$meta['mode'] = 'vbr';
+		$meta['mode']='cbr';
+		if(isset($data->AudioBitrate)) {
+			// TODO: Find a more reliable way to determine VBR/CBR
+			if((int) $data->AudioBitrate % 32 != 0) $meta['mode'] = 'vbr';
+		}
 
 		// Split Track/Total into two variables
-		list($meta['number'], $meta['total']) = explode('/',$data->Track);
+		if(isset($data->Track)) {
+			list($meta['number'], $meta['total']) = explode('/',$data->Track);
+		}
 
-		$meta['bitrate'] = (int) $data->AudioBitrate;
-		$meta['samplerate'] = (int) $data->SampleRate;
-		$meta['artist'] = $data->Artist;
-		$meta['title'] = $data->Title;
-		$meta['album'] = $data->Album;
-		$meta['year'] = $data->Year;
+		if(isset($data->AudioBitrate)) $meta['bitrate'] = (int) $data->AudioBitrate;
+		if(isset($data->SampleRate)) $meta['samplerate'] = (int) $data->SampleRate;
+		if(isset($data->Artist)) $meta['artist'] = $data->Artist;
+		if(isset($data->Title)) $meta['title'] = $data->Title;
+		if(isset($data->Album)) $meta['album'] = $data->Album;
+		if(isset($data->Year)) $meta['year'] = $data->Year;
 
 		return $meta;
 	}
