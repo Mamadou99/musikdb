@@ -273,8 +273,8 @@ class ScannerCommand extends CConsoleCommand {
 		$meta['length'] = 0;
 		$meta['number'] = 0;
 		$meta['total'] = 0;
-		$meta['bitrate'] = 0;(int) $data->AudioBitrate;
-		$meta['samplerate'] = 0; (int) $data->SampleRate;
+		$meta['bitrate'] = 0;
+		$meta['samplerate'] = 0;
 		$meta['artist'] = '';
 		$meta['title'] = '';
 		$meta['album'] = '';
@@ -297,7 +297,9 @@ class ScannerCommand extends CConsoleCommand {
 
 		// Split Track/Total into two variables
 		if(isset($data->Track)) {
-			list($meta['number'], $meta['total']) = explode('/',$data->Track);
+			$trackParts = explode('/',$data->Track);
+			if(isset($trackParts[0])) $meta['number'] = (int) $trackParts[0];
+			if(isset($trackParts[1])) $meta['total'] = (int) $trackParts[1];
 		}
 
 		if(isset($data->AudioBitrate)) $meta['bitrate'] = (int) $data->AudioBitrate;
