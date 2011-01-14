@@ -11,17 +11,16 @@ class ScannerCommand extends CConsoleCommand {
 	private $filesToScan = 0;
 	private $filesScanned = 0;
 	private $filesNew = 0;
+	private $filesFailed = 0;
 	private $currentFile = '';
 
 	private $progressUpdated = 0.0;
+	private $logFileHandle;
 
 	public function ScannerCommand() {
 
 		$this->viewPath = Yii::app()->basePath.'/views/commands/scanner/';
 
-		// check if exiftool is available
-		if(!is_executable(Yii::app()->params['exiftoolBin']))
-			die("\nexiftool is not available. Please check your config!\n\n");
 	}
 
 	public function actionHelp() {
@@ -29,15 +28,19 @@ class ScannerCommand extends CConsoleCommand {
 		$this->renderFile($this->viewPath.'help.php');
 	}
 
-    public function actionFull() {
+    public function actionFull($logfile='') {
 
+		if($logfile) $this->openLogFile($logfile);
 		$this->doScan(true);
+		$this->closeLogFile();
 		echo "\n";
     }
 
-    public function actionUpdate() {
+    public function actionUpdate($logfile='') {
 
+    	if($logfile) $this->openLogFile($logfile);
     	$this->doScan(false);
+    	$this->closeLogFile();
     	echo "\n";
     }
 
@@ -82,9 +85,10 @@ class ScannerCommand extends CConsoleCommand {
      */
     private function updateProgress($force=false) {
 
+    	$microtime = microtime(true);
+
     	// execute this function only every x milliseconds
     	if(!$force) {
-	    	$microtime = microtime(true);
 	    	if($microtime-$this->progressUpdated < self::UPDATE_INTERVAL_MS/1000
 	    			&& $this->progressUpdated > 0) return;
     	}
@@ -102,6 +106,7 @@ class ScannerCommand extends CConsoleCommand {
 				'filesToScan'=>$this->filesToScan,
 				'filesScanned'=>$this->filesScanned,
 				'filesNew'=>$this->filesNew,
+				'filesFailed'=>$this->filesFailed,
 				'currentFile'=>$this->currentFile,
 				'finished'=>$finished,
 			));
@@ -133,11 +138,14 @@ class ScannerCommand extends CConsoleCommand {
 
 		if(!is_readable($baseDir)) return;
 
-		$tmpfile = tempnam(sys_get_temp_dir(), 'collectionfilelist_');
+		$tmpfile = tempnam(sys_get_temp_dir(), 'musikdbscanner_');
 
-		// TODO: Don't hardcode extension
-		$command = "cd ".escapeshellarg($baseDir)."; find -L . -type f -name *.mp3 > ".
-			escapeshellarg($tmpfile);
+		// Create and execute unix find command
+		$nameParams = array();
+		foreach(Yii::app()->params['allowedExts'] as $ext) $nameParams[] = "-iname \"*.$ext\" ! -iname \".*\"";
+		$command = "cd ".escapeshellarg($baseDir)."; ".
+			"find -L . -type f \\( ".implode(' -o ', $nameParams)." \\) > ".escapeshellarg($tmpfile);
+
 		shell_exec($command);
 
 		return $tmpfile;
@@ -210,7 +218,10 @@ class ScannerCommand extends CConsoleCommand {
 		if($artist===null) {
 			$artist = new Artist;
 			$artist->name = $meta['artist'];
-			$artist->save();
+			if(!$artist->save()) {
+				$this->reportFileError($relpath, $artist->getErrors());
+				return;
+			}
 		}
 
 		// Release
@@ -220,7 +231,10 @@ class ScannerCommand extends CConsoleCommand {
 			$release->artist_id = $artist->id;
 			$release->name = $meta['album'];
 			$release->year = $meta['year'];
-			$release->save();
+			if(!$release->save()) {
+				$this->reportFileError($relpath, $release->getErrors());
+				return;
+			}
 		}
 
 		// Track
@@ -229,7 +243,10 @@ class ScannerCommand extends CConsoleCommand {
 		$track->release_id = $release->id;
 		$track->name = $meta['title'];
 		$track->number = (int) $meta['number'];
-		$track->save();
+		if(!$track->save()) {
+			$this->reportFileError($relpath, $track->getErrors());
+			return;
+		}
 
 		// File
 		$file = new File;
@@ -241,73 +258,62 @@ class ScannerCommand extends CConsoleCommand {
 		$file->bitrate = (int) $meta['bitrate'];
 		$file->samplerate = (int) $meta['samplerate'];
 		$file->mode = $meta['mode'];
+		$file->format = $meta['format'];
 		$file->relpath = $relpath;
-		$file->save();
-
-		$this->filesNew++;
+		if($file->save()) $this->filesNew++;
+		else $this->reportFileError($relpath, $file->getErrors());
 	}
 
 	/**
-	 * Get meta data using exiftool
+	 *
+	 */
+	private function reportFileError($relpath, $errorArray) {
+
+		$this->filesFailed++;
+
+		$details = str_replace("\n","",print_r($errorArray, true));
+		$this->logError("Could not add file \"$relpath\" ($details)");
+	}
+
+	/**
+	 * Get meta data using external library
 	 */
 	private function getMetaData($relpath) {
 
 		$fullpath = Yii::app()->params['mediaPath'].'/'.$relpath;
 
-		$tags = array(
-			'AudioBitrate',
-			'SampleRate',
-			'Duration',
-			'Artist',
-			'Title',
-			'Album',
-			'Track',
-			'Year'
-		);
+		// Analyze file using getID3 class
+		require_once Yii::app()->basePath.'/../3rd-party/getid3/getid3.php';
+		$engine = new getID3;
+		$fileinfo = $engine->analyze($fullpath);
 
-		$options = '-j -'.implode($tags, ' -');
-		$command = Yii::app()->params['exiftoolBin']." $options ".' '.escapeshellarg($fullpath);
-		$data = reset(json_decode(shell_exec($command)));
+		// audio info
 
-		$meta = array();
-		$meta['length'] = 0;
-		$meta['number'] = 0;
-		$meta['total'] = 0;
-		$meta['bitrate'] = 0;
-		$meta['samplerate'] = 0;
-		$meta['artist'] = '';
-		$meta['title'] = '';
-		$meta['album'] = '';
-		$meta['year'] = 0;
+		$meta['length'] = (isset($fileinfo['playtime_seconds'])) ? (int) round($fileinfo['playtime_seconds']) : 0;
+		$meta['bitrate'] = (isset($fileinfo['audio']['bitrate'])) ? (int) $fileinfo['audio']['bitrate'] : null;
+		$meta['samplerate'] = (isset($fileinfo['audio']['sample_rate'])) ? (int) $fileinfo['audio']['sample_rate'] : null;
+		$meta['mode'] = (isset($fileinfo['audio']['bitrate_mode'])) ? $fileinfo['audio']['bitrate_mode'] : null;
+		$meta['format'] = (isset($fileinfo['audio']['dataformat'])) ? $fileinfo['audio']['dataformat'] : null;
 
-		// Convert length from MM:SS format into pure seconds
-		if(isset($data->Duration)) {
-			$length_parts = explode(':',$data->Duration);
-			$minutes = (int) $length_parts[0];
-			$seconds = (int) $length_parts[1];
-			$meta['length'] = $minutes*60 + $seconds;
-		}
+		// tags
 
-		// Decide wether it's CBR or VBR
-		$meta['mode']='cbr';
-		if(isset($data->AudioBitrate)) {
-			// TODO: Find a more reliable way to determine VBR/CBR
-			if((int) $data->AudioBitrate % 32 != 0) $meta['mode'] = 'vbr';
-		}
+		// always prefer id3v2 (if not found use the first tag which is there)
+		if(isset($fileinfo['tags']['id3v2'])) $tags = $fileinfo['tags']['id3v2'];
+		else $tags = reset($fileinfo['tags']);
 
 		// Split Track/Total into two variables
-		if(isset($data->Track)) {
-			$trackParts = explode('/',$data->Track);
+		$meta['total'] = 0;
+		$meta['number'] = 0;
+		if(isset($tags['track_number'])) {
+			$trackParts = explode('/',$tags['track_number'][0]);
 			if(isset($trackParts[0])) $meta['number'] = (int) $trackParts[0];
 			if(isset($trackParts[1])) $meta['total'] = (int) $trackParts[1];
 		}
 
-		if(isset($data->AudioBitrate)) $meta['bitrate'] = (int) $data->AudioBitrate;
-		if(isset($data->SampleRate)) $meta['samplerate'] = (int) $data->SampleRate;
-		if(isset($data->Artist)) $meta['artist'] = $data->Artist;
-		if(isset($data->Title)) $meta['title'] = $data->Title;
-		if(isset($data->Album)) $meta['album'] = $data->Album;
-		if(isset($data->Year)) $meta['year'] = $data->Year;
+		$meta['artist'] = (isset($tags['artist'])) ? $tags['artist'][0] : '';
+		$meta['title'] = (isset($tags['title'])) ? $tags['title'][0] : '';
+		$meta['album'] = (isset($tags['album'])) ? $tags['album'][0] : '';
+		$meta['year'] = (isset($tags['year'])) ? $tags['year'][0] : 0;
 
 		return $meta;
 	}
@@ -351,7 +357,7 @@ class ScannerCommand extends CConsoleCommand {
 	}
 
 	/**
-	 * Clears the whole collection
+	 * Clear the whole collection
 	 */
 	private function clearCollection() {
 
@@ -359,6 +365,42 @@ class ScannerCommand extends CConsoleCommand {
 		Track::model()->deleteAll();
 		Release::model()->deleteAll();
 		Artist::model()->deleteAll();
+		Metastring::model()->deleteAll();
+	}
+
+
+	/**
+	 * Try to create the logfile
+	 * .
+	 * @param string $logfile path
+	 */
+	private function openLogFile($logfile) {
+
+		$handle = @fopen($logfile, 'w+');
+		if(!$handle) die("\nLog file could not be written.\n");
+		$this->logFileHandle = $handle;
+	}
+
+	/**
+	 * Closes the log file (if opened before)
+	 *
+	 */
+	private function closeLogFile() {
+
+		if($this->logFileHandle) fclose($this->logFileHandle);
+	}
+
+	/**
+	 * Log an error to the log file (if any)
+	 *
+	 * @param string $msg error message
+	 */
+	private function logError($msg) {
+
+		if(!$this->logFileHandle) return;
+
+		$date = date("d.m.Y H:i:s");
+		fwrite($this->logFileHandle, "[$date] ERROR: $msg\n");
 	}
 
 

@@ -13,6 +13,7 @@ class File extends CActiveRecord
 	 * @var integer $bitrate
 	 * @var integer $samplerate
 	 * @var string $mode
+	 * @var string $format
 	 * @var string $relpath
 	 */
 
@@ -41,11 +42,12 @@ class File extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('track_id, name, mtime, size, length, bitrate, samplerate, mode, relpath', 'required'),
+			array('track_id, name, mtime, size, length, format, relpath', 'required'),
 			array('track_id, mtime, length, bitrate, samplerate', 'numerical', 'integerOnly'=>true),
 			array('size', 'numerical'),
 			array('name', 'length', 'max'=>255),
 			array('mode', 'length', 'max'=>3),
+			array('format', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, track_id, name, mtime, size, length, bitrate, samplerate, mode, relpath', 'safe', 'on'=>'search'),
@@ -79,6 +81,7 @@ class File extends CActiveRecord
 			'bitrate' => 'Bitrate',
 			'samplerate' => 'Samplerate',
 			'mode' => 'Mode',
+			'format' => 'Format',
 			'relpath' => 'Relpath',
 		);
 	}
@@ -111,6 +114,8 @@ class File extends CActiveRecord
 		$criteria->compare('samplerate',$this->samplerate);
 
 		$criteria->compare('mode',$this->mode,true);
+
+		$criteria->compare('format',$this->format,true);
 
 		$criteria->compare('relpath',$this->relpath,true);
 

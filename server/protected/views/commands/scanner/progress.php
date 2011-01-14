@@ -14,7 +14,8 @@ echo '|'.str_pad($titleString ,67, " ", STR_PAD_BOTH)."|\n" ?>
  	echo $filesScanned;
  	echo " (".number_format(round($filesScanned/$filesToScan*100,2),2)."%)\n";
 ?>
-     New files: <?php echo $filesNew."\n" ?>
+         Added: <?php echo $filesNew."\n" ?>
+        Failed: <?php echo $filesFailed."\n" ?>
 
   Current file: <?php echo $currentFile."\n" ?>
 
