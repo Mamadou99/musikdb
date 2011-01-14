@@ -20,7 +20,6 @@ return array(
 		'accessUrl'=>'http://localhost/musikdb/index.php/accesstoken/valid',
 		'allowedExts'=>array('mp3'),
 		'mediaPath'=>'/mnt/mp3',
-		'exiftoolBin'=>'/usr/bin/exiftool',
 		'ffmpegBin'=>'/usr/bin/ffmpeg',
 		'coverFile'=>'folder.jpg',
 
