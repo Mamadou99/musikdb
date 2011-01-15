@@ -9,6 +9,7 @@
  * @property integer $server_id
  * @property integer $crossfadeTime
  * @property integer $transcodingBitrate
+ * @property boolean $alwaysTranscode
  * @property integer $openPopup
  *
  * The followings are the available model relations:
@@ -43,6 +44,7 @@ class Userprofile extends CActiveRecord
 			array('user_id, openPopup', 'required'),
 			array('user_id, server_id, crossfadeTime, transcodingBitrate, openPopup', 'numerical', 'integerOnly'=>true),
 			array('crossfadeTime', 'default', 'setOnEmpty'=>true, 'value'=>Yii::app()->params['crossfadeTime']),
+			array('alwaysTranscode, openPopup', 'boolean'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, user_id, server_id, crossfadeTime, transcodingBitrate, openPopup', 'safe', 'on'=>'search'),
@@ -73,6 +75,7 @@ class Userprofile extends CActiveRecord
 			'server_id' => 'Server',
 			'crossfadeTime' => 'Crossfade Time (ms)',
 			'transcodingBitrate' => 'Transcoding Bitrate',
+			'alwaysTranscode' => 'Always transcode',
 			'openPopup' => 'Open Popup',
 		);
 	}
@@ -93,6 +96,7 @@ class Userprofile extends CActiveRecord
 		$criteria->compare('server_id',$this->server_id);
 		$criteria->compare('crossfadeTime',$this->crossfadeTime);
 		$criteria->compare('transcodingBitrate',$this->transcodingBitrate);
+		$criteria->compare('alwaysTranscode',$this->alwaysTranscode);
 		$criteria->compare('openPopup',$this->openPopup);
 
 		return new CActiveDataProvider(get_class($this), array(

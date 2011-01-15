@@ -298,8 +298,11 @@ class ScannerCommand extends CConsoleCommand {
 		// tags
 
 		// always prefer id3v2 (if not found use the first tag which is there)
-		if(isset($fileinfo['tags']['id3v2'])) $tags = $fileinfo['tags']['id3v2'];
-		else $tags = reset($fileinfo['tags']);
+		$tags = array();
+		if(isset($fileinfo['tags']['id3v2']))
+			$tags = $fileinfo['tags']['id3v2'];
+		elseif(isset($fileinfo['tags']) && count($fileinfo['tags']))
+			$tags = reset($fileinfo['tags']);
 
 		// Split Track/Total into two variables
 		$meta['total'] = 0;

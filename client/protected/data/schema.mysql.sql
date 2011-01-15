@@ -23,9 +23,10 @@ CREATE TABLE `tbl_file` (
   `size` bigint(20) NOT NULL,
   `mtime` int(11) NOT NULL,
   `length` mediumint(9) NOT NULL,
-  `bitrate` mediumint(9) NOT NULL,
-  `samplerate` int(5) NOT NULL,
-  `mode` enum('vbr','cbr') COLLATE utf8_unicode_ci NOT NULL,
+  `bitrate` mediumint(9) DEFAULT NULL,
+  `samplerate` int(5) DEFAULT NULL,
+  `mode` enum('vbr','cbr') COLLATE utf8_unicode_ci DEFAULT NULL,
+  `format` varchar(8) COLLATE utf8_unicode_ci NOT NULL,
   `relpath` text COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
@@ -100,6 +101,7 @@ CREATE TABLE `tbl_userprofile` (
   `server_id` int(11) DEFAULT NULL,
   `crossfadeTime` int(5) DEFAULT NULL,
   `transcodingBitrate` int(6) DEFAULT NULL,
+  `alwaysTranscode` tinyint(1) NOT NULL,
   `openPopup` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;

@@ -6,6 +6,7 @@ class AudioStream extends CModel
 	public $accesstoken;
 	public $relpath;
 	public $baseDir;
+	public $alwaysTranscode;
 
 
 	/**
@@ -35,7 +36,8 @@ class AudioStream extends CModel
 			'bitrate',
 			'accesstoken',
 			'relpath',
-			'baseDir'
+			'baseDir',
+			'alwaysTranscode',
 		);
 	}
 

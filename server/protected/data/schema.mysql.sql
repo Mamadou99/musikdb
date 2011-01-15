@@ -101,6 +101,7 @@ CREATE TABLE `tbl_userprofile` (
   `server_id` int(11) DEFAULT NULL,
   `crossfadeTime` int(5) DEFAULT NULL,
   `transcodingBitrate` int(6) DEFAULT NULL,
+  `alwaysTranscode` tinyint(1) NOT NULL,
   `openPopup` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8;

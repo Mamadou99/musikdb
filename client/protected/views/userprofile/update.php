@@ -2,6 +2,7 @@
 	// Immediately apply the new settings
 	crossfadeTime = <?php echo $model->crossfadeTime ?>;
 	transcodingBitrate = <?php echo $model->transcodingBitrate ?>;
+	alwaysTranscode = <?php echo ($model->alwaysTranscode) ? '1' : '0' ?>;
 	serverBaseUrl = "<?php echo $model->server->baseUrl ?>";
 
 	// Hide status message after a couple of seconds

@@ -35,6 +35,13 @@
 				<?php echo $form->error($model,'transcodingBitrate'); ?>
 			</div>
 
+			<div class="row">
+				<?php echo $form->labelEx($model,'alwaysTranscode'); ?>
+				<?php echo $form->checkBox($model,'alwaysTranscode'); ?>
+				<?php echo $form->error($model,'alwaysTranscode'); ?>
+				(When turned off, transcoding is only used to make non-mp3 files streamable.)
+			</div>
+
 		</fieldset>
 
 		<fieldset>

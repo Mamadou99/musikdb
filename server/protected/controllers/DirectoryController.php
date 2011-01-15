@@ -61,7 +61,7 @@ class DirectoryController extends Controller
 		if(isset($_REQUEST['dir']))
 			$model->directory = Helpers::decodeUrl($_REQUEST['dir']);
 
-		$model->allowedExts = array('mp3');
+		$model->allowedExts = Yii::app()->params['allowedExts'];
 		$model->contents = $this->readDirectory($model);
 		$model->upperDir = '';
 

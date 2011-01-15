@@ -62,7 +62,8 @@ class StreamController extends Controller
 		$accesstokenValue = $params[0];
 		$relpath = Helpers::decodeUrl($params[1]);
 		$bitrate_size = $params[2];
-		$ext = $params[3];
+		$alwaysTranscode = ((int) $params[3]==1) ? true : false;
+		$ext = $params[4];
 
 		// Check accesstoken
 		if(!Helpers::checkAccesstoken($accesstokenValue)) return;
@@ -74,6 +75,7 @@ class StreamController extends Controller
 			$this->_model->accesstoken = $accesstokenValue;
 			$this->_model->bitrate = $bitrate_size;
 			$this->_model->baseDir = Yii::app()->params['mediaPath'];
+			$this->_model->alwaysTranscode = $alwaysTranscode;
 			if(!$this->_model->validate()) return;
 
 			$this->streamAudio();
@@ -100,6 +102,7 @@ class StreamController extends Controller
 	private function streamAudio() {
 
 		$path = $this->_model->baseDir.DIRECTORY_SEPARATOR.$this->_model->relpath;
+		$origExt = pathinfo($this->_model->relpath, PATHINFO_EXTENSION);
 
 		if(!is_readable($path)) {
 			header("HTTP/1.0 404 Not Found");
@@ -109,8 +112,8 @@ class StreamController extends Controller
 		session_write_close();
 		header("Content-Type: audio/mpeg");
 
-		// direct stream
-		if($this->_model->bitrate==0) {
+		// direct stream (only for mp3 files)
+		if(!$this->_model->alwaysTranscode && $origExt == 'mp3') {
 
 			header("Content-Length: ".filesize($path));
 			echo file_get_contents($path);
