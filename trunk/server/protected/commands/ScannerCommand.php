@@ -141,10 +141,12 @@ class ScannerCommand extends CConsoleCommand {
 		$tmpfile = tempnam(sys_get_temp_dir(), 'musikdbscanner_');
 
 		// Create and execute unix find command
+		// exclude hidden files and directories
 		$nameParams = array();
 		foreach(Yii::app()->params['allowedExts'] as $ext) $nameParams[] = "-iname \"*.$ext\" ! -iname \".*\"";
 		$command = "cd ".escapeshellarg($baseDir)."; ".
-			"find -L . -type f \\( ".implode(' -o ', $nameParams)." \\) > ".escapeshellarg($tmpfile);
+			'find -L . \( ! -regex \'.*/\..*\' \) -type f \\( '.
+			implode(' -o ', $nameParams)." \\) > ".escapeshellarg($tmpfile);
 
 		shell_exec($command);
 
