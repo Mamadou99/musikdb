@@ -6,8 +6,9 @@ function playSong(listElement) {
 	var songFilename = listElement.children("a").children("span.filename").html();
 	var songRelpath = listElement.children("a").attr("rel");
 	
-	var songUrl =  serverBaseUrl + streamUrl + '/' + accesstoken + '.' + songRelpath + '.' + transcodingBitrate + '.mp3';
-	var coverUrl = serverBaseUrl + streamUrl + '/' + accesstoken + '.' + songRelpath + '.0.jpg';
+	var songUrl =  serverBaseUrl + streamUrl + '/' + accesstoken + '.' + songRelpath + '.' +
+			transcodingBitrate + '.' + alwaysTranscode + '.mp3';
+	var coverUrl = serverBaseUrl + streamUrl + '/' + accesstoken + '.' + songRelpath + '.0.0.jpg';
 	checkAccesstoken();
 	
 	if('console' in window && 'log' in window.console)

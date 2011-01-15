@@ -52,6 +52,7 @@ class Controller extends CController
 			// settings which may be overriden by the userprofile
 			'crossfadeTime' => (int)Yii::app()->params['crossfadeTime'],
 			'transcodingBitrate' => 0,
+			'alwaysTranscode' => 0,
 		);
 
 		// retrieve user settings
