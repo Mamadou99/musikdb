@@ -21,6 +21,7 @@ return array(
 		'allowedExts'=>array('mp3'),
 		'mediaPath'=>'/mnt/mp3',
 		'ffmpegBin'=>'/usr/bin/ffmpeg',
+		'mysqldumpBin'=>'/usr/bin/mysqldump',
 		'coverFile'=>'folder.jpg',
 
 	),
