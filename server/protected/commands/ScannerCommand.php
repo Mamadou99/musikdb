@@ -30,6 +30,9 @@ class ScannerCommand extends CConsoleCommand {
 
     public function actionFull($logfile='') {
 
+    	$this->createDump();
+    	die();
+
 		if($logfile) $this->openLogFile($logfile);
 		$this->doScan(true);
 		$this->closeLogFile();
@@ -41,6 +44,18 @@ class ScannerCommand extends CConsoleCommand {
     	if($logfile) $this->openLogFile($logfile);
     	$this->doScan(false);
     	$this->closeLogFile();
+    	echo "\n";
+    }
+
+    public function actionExport() {
+
+    	echo "Creating dump ... ";
+    	if($this->createDump()) {
+    		echo "DONE\n";
+    	}
+    	else {
+    		echo "FAILED\n";
+    	}
     	echo "\n";
     }
 
@@ -325,7 +340,7 @@ class ScannerCommand extends CConsoleCommand {
 
 	/**
 	 * Rebuild the search index
-	 * .
+	 *
 	 */
 	private function rebuildIndex() {
 
@@ -359,6 +374,55 @@ class ScannerCommand extends CConsoleCommand {
 			}
 
 		}
+	}
+
+	/**
+	 * Creates a DB dump containing the collection tables
+	 *
+	 * @return boolean true on success
+	 */
+	private function createDump() {
+
+		$connectionStr = Yii::app()->db->connectionString;
+		if(!substr($connectionStr,0,5) == 'mysql') return false;
+
+		// tables needed for the collection
+		$tables = array('artist','file','metastring','release','track');
+		$tablePrefix = Yii::app()->db->tablePrefix;
+
+		// parameters for mysqldump
+		$commandParamsArr = array(
+			'username' => array('-u',''),
+			'password' => array('-p',''),
+			'host' => array('-h',''),
+			'dbname' => array('',''),
+		);
+
+		// convert connectionString to an array
+		$params=explode(';',substr($connectionStr,6));
+		foreach($params as $param) {
+			$kv = explode('=',$param);
+			$commandParamsArr[$kv[0]][1]=$kv[1];
+		}
+
+		$commandParamsArr['username'][1] = Yii::app()->db->username;
+		$commandParamsArr['password'][1] = Yii::app()->db->password;
+
+		// create parameter string
+		$commandParams = '';
+		foreach($commandParamsArr as $param) {
+			if($param[1]) $commandParams.= ' '.$param[0].trim(escapeshellarg($param[1]));
+		}
+		$commandParams.= " $tablePrefix".implode(" $tablePrefix",$tables);
+		$filename = 'musikdbcollection_'.date('Y-d-m_H-i-s').'.sql.gz';
+
+		$command = Yii::app()->params['mysqldumpBin']." --add-drop-table $commandParams | ".
+			"gzip -c > $filename";
+
+		shell_exec($command);
+		if(!@filesize($filename) > 0) return false;
+
+		return true;
 	}
 
 	/**
