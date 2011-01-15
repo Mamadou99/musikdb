@@ -383,6 +383,8 @@ class ScannerCommand extends CConsoleCommand {
 	 */
 	private function createDump() {
 
+		if(!is_executable(Yii::app()->params['mysqldumpBin'])) return false;
+
 		$connectionStr = Yii::app()->db->connectionString;
 		if(!substr($connectionStr,0,5) == 'mysql') return false;
 
