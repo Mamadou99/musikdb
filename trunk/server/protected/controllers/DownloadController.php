@@ -57,6 +57,9 @@ class DownloadController extends Controller
 		$dirname = basename($path);
 
 		if(is_readable($path)) {
+
+			session_write_close();
+
 			header('Content-Type: application/octet-stream');
 			header('Content-Disposition: attachment; filename="'.$dirname.'.zip"');
 			header('Content-Transfer-Encoding: binary');
