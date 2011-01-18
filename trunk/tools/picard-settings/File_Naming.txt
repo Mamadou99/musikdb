@@ -1,0 +1,11 @@
+$if($eq(%albumartist%,Various Artists),
+VA/
+$firstalphachar($upper($left(%album%,1)),#)/
+$left(%album%,255)/
+$left(%discnumber%$num(%tracknumber%,2) - %artist% - %title%,255),
+Alben/
+$firstalphachar($upper($left(%albumartistsort%,1)),#)/
+$left($if2(%albumartistsort%,%artistsort%),255)/
+$left(%album%,255)/
+$left(%discnumber%$num(%tracknumber%,2) - %artist% - %title%,255)
+)
